@@ -1,33 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Agent Chat</title>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-    <style>
-        .message {
-            margin-bottom: 10px;
-        }
-        #chat {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
+
 <body>
     <h1>Chat with Agents</h1>
-    <div id="chat"></div>
-    <input type="text" id="topic_input" placeholder="Enter a topic..." autocomplete="off"/>
-    <button onclick="startConversation()">Start Conversation</button>
+    <section class="page-content">
+        <div class="contacts">
 
+            <button class="pointer" onclick="setChat('Tea from Olympus')">
+                <div class="contact">
+                    <img src="static/contacts/Tea from Olympus.jpeg" height="50" width="50" alt="">
+                    <p>Tea from Olympus</p>
+                </div>
+            </button>
+
+            <button class="pointer" onclick="setChat('Aphrodite')">
+                <div class="contact">
+                    <img src="static/contacts/aphrodite.jpeg" height="50" width="50" alt="">
+                    <p>Aphrodite</p>
+                </div>
+            </button>
+
+            <button class="pointer" onclick="setChat('Apollo')">
+                <div class="contact">
+                    <img src="static/contacts/apollo.jpeg" height="50" width="50" alt="">
+                    <p>Apollo</p>
+                </div>
+            </button>
+
+            <button class="pointer" onclick="setChat('Ares')">
+                <div class="contact">
+                    <img src="static/contacts/ares.jpeg" height="50" width="50" alt="">
+                    <p>Ares</p>
+                </div>
+            </button>
+
+            <button class="pointer" onclick="setChat('Athena')">
+                <div class="contact">
+                    <img src="static/contacts/athena.jpeg" height="50" width="50" alt="">
+                    <p>Athena</p>
+                </div>
+            </button>
+
+            <button class="pointer" onclick="setChat('Hades')">
+                <div class="contact">
+                    <img src="static/contacts/hades.jpeg" height="50" width="50" alt="">
+                    <p>Hades</p>
+                </div>
+            </button>
+
+            <button class="pointer" onclick="setChat('Poseidon')">
+                <div class="contact">
+                    <img src="static/contacts/poseidon.jpeg" height="50" width="50" alt="">
+                    <p>Poseidon</p>
+                </div>
+            </button>
+
+            <button class="pointer" onclick="setChat('Zeus')">
+                <div class="contact">
+                    <img src="static/contacts/zeus.jpeg" height="50" width="50" alt="">
+                    <p>Zeus</p>
+                </div>
+            </button>
+
+        </div>
+        <div class="chat-container">
+            <section id="chat-header">
+                <img id="profile-picture" src="/static/contacts/zeus.jpeg" width="60" height="60" alt="">
+                <p id="contact-name">Zeus</p>
+             </section>
+            <div id="chat"></div>
+            <input type="text" id="topic_input" placeholder="Enter a topic..." autocomplete="off" />
+            <button onclick="startConversation()">Send</button>
+        </div>
+    </section>
     <script>
         var socket = io.connect('http://127.0.0.1:5000');
         var currentMessageContainer = null;
         var currentRole = null;
 
-        socket.on('new_message', function(msg) {
+        socket.on('new_message', function (msg) {
             var chat = document.getElementById('chat');
 
             // Check if the role has changed or if there is no current message container
@@ -47,9 +105,20 @@
         function startConversation() {
             var input = document.getElementById('topic_input');
             var topic = input.value;
-            socket.emit('start_conversation', {topic: topic});
+            socket.emit('start_conversation', { topic: topic });
             input.value = '';
+        }
+
+        function setChat(contact){
+            console.log("Starting chat with " + contact)
+
+            socket.emit("set_chat", { contact: contact })
+
+            document.getElementById("contact-name").innerHTML = contact
+            document.getElementById("profile-picture").src = `/static/contacts/${contact.toLowerCase()}.jpeg`
+            
         }
     </script>
 </body>
+
 </html>

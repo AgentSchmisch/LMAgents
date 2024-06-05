@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit
 import requests
 from flask_cors import CORS
@@ -9,7 +9,7 @@ import random
 import json
 import csv  # Import the CSV module
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -104,6 +104,10 @@ agents = load_agents_from_config('agents_config.json')
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@socketio.on("set_chat")
+def set_chat(data):
+    print("setting chat", data["contact"])
 
 @socketio.on('start_conversation')
 def handle_start_conversation(data):

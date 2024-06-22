@@ -99,39 +99,75 @@ def load_agents_from_config(config_file):
         agents.append(agent)
     return agents
 
+def create_single_agent(name, config_file):
+    with open(config_file, "r") as f:
+        config = json.load(f)
+        for agent_conf in config:
+            if agent_conf["name"] == name:
+                agent = LMStudioAgent(
+                    name=agent_conf["name"],
+                    api_url=agent_conf["api_url"],
+                    api_key=agent_conf["api_key"],
+                    model=agent_conf["model"],
+                    temperature=agent_conf["temperature"],
+                    starting_prompt=agent_conf["starting_prompt"])
+                return agent
+            else:
+                continue
+
 agents = load_agents_from_config('agents_config.json')
+
+chat_groups = ["Tea from Olympus"]
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@socketio.on("set_chat")
-def set_chat(data):
-    print("setting chat", data["contact"])
 
 @socketio.on('start_conversation')
 def handle_start_conversation(data):
     topic = data['topic']
-    socketio.emit('new_message', {'role': 'system', 'content': f"Starting conversation on topic: {topic}"})
+    selected_agent = data['contact']
+    socketio.emit('new_message', {'role': 'You', 'content': topic})
 
     for agent in agents:
         agent.reset_history()
         agent.history.append({"role": "user", "content": topic})
+    
+    if selected_agent in chat_groups:
+            threading.Thread(target=run_conversation, args=(agents, topic, selected_agent)).start()
+    else:
+        for agent in agents:
+            if agent.name == selected_agent:
+                global_agent = agent
+                print("current agent", global_agent)
+                threading.Thread(target=run_conversation, args=(agent, topic, selected_agent)).start()
+                break
 
-    threading.Thread(target=run_conversation, args=(agents, topic)).start()
 
-def run_conversation(agents, initial_message, num_turns=15):
+
+def run_conversation(agents, initial_message, global_agent, num_turns=10):
+    print("the current global agent is", global_agent)
+    # if check the global_agent variable and determine which chat mode is to be used
     message = initial_message
     last_agent = None
-    
-    for _ in range(num_turns):
-        available_agents = [agent for agent in agents if agent != last_agent]
-        agent = random.choice(available_agents)
+
+    print("current agent", global_agent)
+    if global_agent in chat_groups:    
+        for _ in range(num_turns):
+            available_agents = [agent for agent in agents if agent != last_agent]
+            agent = random.choice(available_agents)
+            response = agent.respond(message)
+            socketio.emit('new_message', {'role': agent.name, 'content': response})
+            message = response
+            last_agent = agent
+            time.sleep(1)  # Add a delay between messages
+    else:
+        # in this case we only have a single agent
+        agent = create_single_agent(global_agent, "agents_config.json")
+        print(agent)
         response = agent.respond(message)
         socketio.emit('new_message', {'role': agent.name, 'content': response})
-        message = response
-        last_agent = agent
-        time.sleep(1)  # Add a delay between messages
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

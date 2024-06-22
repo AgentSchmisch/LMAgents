@@ -76,17 +76,24 @@
                 <p id="contact-name">Zeus</p>
              </section>
             <div id="chat"></div>
-            <input type="text" id="topic_input" placeholder="Enter a topic..." autocomplete="off" />
+            <input type="text" id="topic_input" placeholder="Message...." autocomplete="off" />
             <button onclick="startConversation()">Send</button>
         </div>
     </section>
     <script>
-        var socket = io.connect('http://127.0.0.1:5000');
-        var currentMessageContainer = null;
-        var currentRole = null;
+        let socket = io.connect('http://127.0.0.1:5000');
+        let currentMessageContainer = null;
+        let currentRole = null;
+        let currentContact = ""
+
+        document.getElementById("topic_input").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                startConversation();
+            }
+        });
 
         socket.on('new_message', function (msg) {
-            var chat = document.getElementById('chat');
+            let chat = document.getElementById('chat');
 
             // Check if the role has changed or if there is no current message container
             if (currentRole !== msg.role || !currentMessageContainer) {
@@ -98,22 +105,24 @@
             }
 
             // Update the current message container with the new content
-            currentMessageContainer.textContent = `${msg.role}: ${msg.content}`;
+            currentMessageContainer.innerHTML = `<b>${msg.role}</b>: ${msg.content}`;
             chat.scrollTop = chat.scrollHeight;  // Scroll to the bottom
         });
 
         function startConversation() {
-            var input = document.getElementById('topic_input');
-            var topic = input.value;
-            socket.emit('start_conversation', { topic: topic });
+            let input = document.getElementById('topic_input');
+            let topic = input.value;
+            // adding the recipient and the starting message to the emitted message
+            socket.emit('start_conversation', { topic: topic, contact: currentContact});
             input.value = '';
         }
 
         function setChat(contact){
             console.log("Starting chat with " + contact)
-
+            currentContact = contact
             socket.emit("set_chat", { contact: contact })
-
+            //TODO: reset the chatcontent
+            document.getElementById("chat").innerHTML = ""
             document.getElementById("contact-name").innerHTML = contact
             document.getElementById("profile-picture").src = `/static/contacts/${contact.toLowerCase()}.jpeg`
             

@@ -164,7 +164,7 @@ def run_conversation(agents, initial_message, global_agent, num_turns=10):
             time.sleep(1)  # Add a delay between messages
     else:
         # in this case we only have a single agent
-        agent = create_single_agent(global_agent, "agents_config.json")
+        agent = create_single_agent(global_agent, "agents_config_single.json")
         print(agent)
         response = agent.respond(message)
         socketio.emit('new_message', {'role': agent.name, 'content': response})

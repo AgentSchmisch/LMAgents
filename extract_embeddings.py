@@ -9,7 +9,7 @@ def get_embedding(text, model="model-identifier"):
     return client.embeddings.create(input=[text], model=model).data[0].embedding
 
 def process_csv(input_file, output_file, model="model-identifier"):
-    with open(input_file, mode='r', newline='') as infile, open(output_file, mode='w', newline='') as outfile:
+    with open(input_file, mode='r', encoding="utf-8", newline='') as infile, open(output_file, mode='w',encoding="utf-8", newline='') as outfile:
         reader = csv.reader(infile)
         writer = csv.writer(outfile)
 

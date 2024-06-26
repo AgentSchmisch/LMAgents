@@ -9,82 +9,105 @@
 </head>
 
 <body>
-    <h1>Chat with Agents</h1>
-    <section class="page-content">
-        <div class="contacts">
+    <div class="app">
+        <div class="sidebar">
+            <header class="sidebar-header">
+                <p class="user-name">WhatsUpp on Olympus</p>
+                <p>Made by Florian S. & Zsanett W.</p>
+            </header>
+            <div class="contacts">
 
-            <button class="pointer" onclick="setChat('Tea from Olympus')">
-                <div class="contact">
-                    <img src="static/contacts/Tea from Olympus.jpeg" height="50" width="50" alt="">
-                    <p>Tea from Olympus</p>
-                </div>
-            </button>
+                <button class="pointer" onclick="setChat('Tea from Olympus')">
+                    <div class="contact">
+                        <img src="static/contacts/Tea from Olympus.jpeg" class="contact-pic" alt="">
+                        <div class="contact-info">
+                            <p class="contact-name">Tea from Olympus</p>
+                        </div>
+                    </div>
+                </button>
 
-            <button class="pointer" onclick="setChat('Aphrodite')">
-                <div class="contact">
-                    <img src="static/contacts/aphrodite.jpeg" height="50" width="50" alt="">
-                    <p>Aphrodite</p>
-                </div>
-            </button>
+                <button class="pointer" onclick="setChat('Aphrodite')">
+                    <div class="contact">
+                        <img src="static/contacts/aphrodite.jpeg" class="contact-pic" alt="">
+                        <div class="contact-info">
+                            <p class="contact-name">Aphrodite</p>
+                        </div>
+                    </div>
+                </button>
 
-            <button class="pointer" onclick="setChat('Apollo')">
-                <div class="contact">
-                    <img src="static/contacts/apollo.jpeg" height="50" width="50" alt="">
-                    <p>Apollo</p>
-                </div>
-            </button>
+                <button class="pointer" onclick="setChat('Apollo')">
+                    <div class="contact">
+                        <img src="static/contacts/apollo.jpeg" class="contact-pic" alt="">
+                        <div class="contact-info">
+                            <p class="contact-name">Apollo</p>
+                        </div>
+                    </div>
+                </button>
 
-            <button class="pointer" onclick="setChat('Ares')">
-                <div class="contact">
-                    <img src="static/contacts/ares.jpeg" height="50" width="50" alt="">
-                    <p>Ares</p>
-                </div>
-            </button>
+                <button class="pointer" onclick="setChat('Ares')">
+                    <div class="contact">
+                        <img src="static/contacts/ares.jpeg" class="contact-pic" alt="">
+                        <div class="contact-info">
+                            <p class="contact-name">Ares</p>
+                        </div>
+                    </div>
+                </button>
 
-            <button class="pointer" onclick="setChat('Athena')">
-                <div class="contact">
-                    <img src="static/contacts/athena.jpeg" height="50" width="50" alt="">
-                    <p>Athena</p>
-                </div>
-            </button>
+                <button class="pointer" onclick="setChat('Athena')">
+                    <div class="contact">
+                        <img src="static/contacts/athena.jpeg" class="contact-pic" alt="">
+                        <div class="contact-info">
+                            <p class="contact-name">Athena</p>
+                        </div>
+                    </div>
+                </button>
 
-            <button class="pointer" onclick="setChat('Hades')">
-                <div class="contact">
-                    <img src="static/contacts/hades.jpeg" height="50" width="50" alt="">
-                    <p>Hades</p>
-                </div>
-            </button>
+                <button class="pointer" onclick="setChat('Hades')">
+                    <div class="contact">
+                        <img src="static/contacts/hades.jpeg" class="contact-pic" alt="">
+                        <div class="contact-info">
+                            <p class="contact-name">Hades</p>
+                        </div>
+                    </div>
+                </button>
 
-            <button class="pointer" onclick="setChat('Poseidon')">
-                <div class="contact">
-                    <img src="static/contacts/poseidon.jpeg" height="50" width="50" alt="">
-                    <p>Poseidon</p>
-                </div>
-            </button>
+                <button class="pointer" onclick="setChat('Poseidon')">
+                    <div class="contact">
+                        <img src="static/contacts/poseidon.jpeg" class="contact-pic" alt="">
+                        <div class="contact-info">
+                            <p class="contact-name">Poseidon</p>
+                        </div>
+                    </div>
+                </button>
 
-            <button class="pointer" onclick="setChat('Zeus')">
-                <div class="contact">
-                    <img src="static/contacts/zeus.jpeg" height="50" width="50" alt="">
-                    <p>Zeus</p>
-                </div>
-            </button>
+                <button class="pointer" onclick="setChat('Zeus')">
+                    <div class="contact">
+                        <img src="static/contacts/zeus.jpeg" class="contact-pic" alt="">
+                        <div class="contact-info">
+                            <p class="contact-name">Zeus</p>
+                        </div>
+                    </div>
+                </button>
 
+            </div>
         </div>
         <div class="chat-container">
             <section id="chat-header">
-                <img id="profile-picture" src="/static/contacts/zeus.jpeg" width="60" height="60" alt="">
+                <img id="profile-picture" src="static/contacts/zeus.jpeg" class="profile-pic" alt="">
                 <p id="contact-name">Zeus</p>
-             </section>
+            </section>
             <div id="chat"></div>
-            <input type="text" id="topic_input" placeholder="Message...." autocomplete="off" />
-            <button onclick="startConversation()">Send</button>
+            <div class="input-container">
+                <input type="text" id="topic_input" placeholder="Message...." autocomplete="off" />
+                <button onclick="startConversation()" class="send-button">Send</button>
+            </div>
         </div>
-    </section>
+    </div>
     <script>
         let socket = io.connect('http://127.0.0.1:5000');
         let currentMessageContainer = null;
         let currentRole = null;
-        let currentContact = ""
+        let currentContact = "Zeus"
 
         document.getElementById("topic_input").addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
@@ -113,11 +136,11 @@
             let input = document.getElementById('topic_input');
             let topic = input.value;
             // adding the recipient and the starting message to the emitted message
-            socket.emit('start_conversation', { topic: topic, contact: currentContact});
+            socket.emit('start_conversation', { topic: topic, contact: currentContact });
             input.value = '';
         }
 
-        function setChat(contact){
+        function setChat(contact) {
             console.log("Starting chat with " + contact)
             currentContact = contact
             socket.emit("set_chat", { contact: contact })
@@ -125,7 +148,7 @@
             document.getElementById("chat").innerHTML = ""
             document.getElementById("contact-name").innerHTML = contact
             document.getElementById("profile-picture").src = `/static/contacts/${contact.toLowerCase()}.jpeg`
-            
+
         }
     </script>
 </body>
